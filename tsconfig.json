@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    // 🌐 Ambiente de execução
+    "module": "ESNext", // Suporte a ES Modules + Node.js
+    "moduleResolution": "Node", // Resolve imports como no Node.js
+    "target": "ESNext", // Gera código moderno
+    "lib": ["ESNext", "DOM"], // APIs modernas + DOM para React
+    "types": ["node"], // Tipagens para Node.js
+
+    // 📁 Organização dos arquivos
+    "rootDir": "./src", // Código-fonte
+    "outDir": "./dist", // Código compilado
+
+    // 🛠️ Geração de arquivos auxiliares
+    "sourceMap": true, // Mapas para debugging
+    "declaration": true, // Gera arquivos .d.ts
+    "declarationMap": true, // Mapas para declarações
+
+    // 🔒 Verificações mais rigorosas
+    "strict": true, // Ativa todas as verificações
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // 🎨 Estilo e boas práticas
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // ⚙️ Configurações recomendadas para React
+    "jsx": "react-jsx", // JSX moderno (React 17+)
+    "verbatimModuleSyntax": true, // Mantém sintaxe de import/export
+    "isolatedModules": true, // Suporte ao Babel/Vite
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force", // Detecta módulos com precisão
+    "skipLibCheck": true // Ignora verificação de libs externas
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
