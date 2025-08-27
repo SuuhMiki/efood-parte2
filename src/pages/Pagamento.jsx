@@ -1,63 +1,136 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import { useCart } from '../context/CartContext'
+import React, { useState } from 'react'
+import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
-import { maskCardNumber, maskExpiry, maskCVV, isValidCVV, isValidExpiry, isValidCardLuhn } from '../utils/masks'
+import { useCart } from '../context/CartContext'
 
-export default function Pagamento(){
-  const { setPayment, setOrderId, total } = useCart()
-  const [form, setForm] = useState({numero:'', validade:'', cvv:''})
-  const [errors, setErrors] = useState({})
-  const navigate = useNavigate()
-
-  function validate(){
-    const e = {}
-    if(!isValidCardLuhn(form.numero)) e.numero = 'Número do cartão inválido'
-    if(!isValidExpiry(form.validade)) e.validade = 'Validade inválida (MM/AA)'
-    if(!isValidCVV(form.cvv)) e.cvv = 'CVV inválido'
-    setErrors(e)
-    return Object.keys(e).length === 0
+const Sidebar = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  max-width: 100vw;
+  height: 100vh;
+  background: #e66767;
+  color: #fff;
+  padding: 16px 16px 0 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+  box-sizing: border-box;
+`
+const Label = styled.label`
+  font-size: 13px;
+  color: #ffe5dc;
+  margin-bottom: 2px;
+`
+const Input = styled.input`
+  background: #ffe5dc;
+  border: none;
+  border-radius: 0;
+  padding: 6px 8px;
+  font-size: 15px;
+  color: #e66767;
+  font-weight: 600;
+  outline: none;
+  margin-bottom: 8px;
+  width: 100%;
+`
+const Row = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+`
+const Button = styled.button`
+  width: 100%;
+  background: #ffe5dc;
+  color: #e66767;
+  font-weight: 700;
+  border: none;
+  border-radius: 0;
+  padding: 8px 0;
+  font-size: 15px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: #ffd2c2;
   }
+`
+export default function Pagamento() {
+  const [form, setForm] = useState({
+    nome: '',
+    numero: '',
+    cvv: '',
+    mes: '',
+    ano: ''
+  })
+  const navigate = useNavigate()
+  const { setPayment } = useCart()
+  const valor = 190.9 // valor fixo para exemplo
 
-  function onSubmit(e){
+  function onSubmit(e) {
     e.preventDefault()
-    if(!validate()) return
-    setPayment({ ...form, total })
-    // mock order id
-    setOrderId(String(Math.floor(Math.random()*900000+100000)))
+    setPayment(form)
     navigate('/confirmacao')
   }
 
   return (
-    <>
-      <Header/>
-      <div style={{maxWidth:600, margin:'24px auto', padding:'0 16px'}}>
-        <h2>Pagamento</h2>
-        <form onSubmit={onSubmit} noValidate>
-          <div style={{display:'grid', gap:12}}>
-            <div className="field">
-              <label>Número do cartão</label>
-              <input className={errors.numero ? 'error':''} placeholder="0000 0000 0000 0000" value={form.numero} onChange={e=>setForm({...form, numero: maskCardNumber(e.target.value)})} />
-              {errors.numero && <small className="error">{errors.numero}</small>}
-            </div>
-            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
-              <div className="field">
-                <label>Validade (MM/AA)</label>
-                <input className={errors.validade ? 'error':''} placeholder="MM/AA" value={form.validade} onChange={e=>setForm({...form, validade: maskExpiry(e.target.value)})} />
-                {errors.validade && <small className="error">{errors.validade}</small>}
-              </div>
-              <div className="field">
-                <label>CVV</label>
-                <input className={errors.cvv ? 'error':''} placeholder="CVV" value={form.cvv} onChange={e=>setForm({...form, cvv: maskCVV(e.target.value)})} />
-                {errors.cvv && <small className="error">{errors.cvv}</small>}
-              </div>
-            </div>
-            <button type="submit" style={{background:'var(--primary)', color:'white', border:'none', padding:'10px 12px', borderRadius:8}}>Finalizar</button>
-          </div>
-        </form>
+    <Sidebar>
+      <div style={{ fontSize: 13, marginBottom: 8, fontWeight: 700 }}>
+        Pagamento - Valor a pagar R$ {valor.toFixed(2)}
       </div>
-      <Footer/>
-    </>
+      <form onSubmit={onSubmit} noValidate autoComplete="off">
+        <Label>Nome no cartão</Label>
+        <Input
+          value={form.nome}
+          onChange={(e) => setForm({ ...form, nome: e.target.value })}
+          placeholder="João Paulo de Souza"
+        />
+        <Row>
+          <div style={{ flex: 2 }}>
+            <Label>Número do cartão</Label>
+            <Input
+              value={form.numero}
+              onChange={(e) => setForm({ ...form, numero: e.target.value })}
+              placeholder="Número do cartão"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Label>CVV</Label>
+            <Input
+              value={form.cvv}
+              onChange={(e) => setForm({ ...form, cvv: e.target.value })}
+              placeholder="CVV"
+            />
+          </div>
+        </Row>
+        <Row>
+          <div style={{ flex: 1 }}>
+            <Label>Mês de vencimento</Label>
+            <Input
+              value={form.mes}
+              onChange={(e) => setForm({ ...form, mes: e.target.value })}
+              placeholder="MM"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <Label>Ano de vencimento</Label>
+            <Input
+              value={form.ano}
+              onChange={(e) => setForm({ ...form, ano: e.target.value })}
+              placeholder="AAAA"
+            />
+          </div>
+        </Row>
+        <Button type="submit">Finalizar pagamento</Button>
+        <Button
+          type="button"
+          style={{ background: '#ffe5dc', color: '#e66767', fontWeight: 700 }}
+          onClick={() => navigate('/entrega')}
+        >
+          Voltar para a edição de endereço
+        </Button>
+      </form>
+    </Sidebar>
   )
 }

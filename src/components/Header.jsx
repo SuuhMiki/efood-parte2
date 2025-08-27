@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 const Bar = styled.header`
-  background: var(--card);
+  background: #ffe5dc;
   border-bottom: 2px solid var(--primary);
   display: flex;
   align-items: center;
@@ -22,7 +22,6 @@ const Brand = styled(Link)`
   align-items: center;
   gap: 8px;
 `
-
 const Nav = styled.nav`
   display: flex;
   gap: 16px;
@@ -47,6 +46,8 @@ const Nav = styled.nav`
   }
 `
 
+// Nav removido, não é necessário para o cabeçalho da home
+
 export default function Header() {
   const { items } = useCart()
   const count = items.reduce((acc, i) => acc + i.qty, 0)
@@ -54,7 +55,7 @@ export default function Header() {
   return (
     <Bar>
       <Brand to="/">
-        <img src="/src/assets/logo.svg" alt="eFood" width="28" height="28" />{' '}
+        <img src="/src/assets/logo.png" alt="eFood" width="28" height="28" />{' '}
         eFood
       </Brand>
       <Nav>
