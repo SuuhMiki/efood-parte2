@@ -14,6 +14,9 @@ const OverlayBg = styled.div`
 `
 
 const Sidebar = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
   width: 400px;
   max-width: 100vw;
   height: 100vh;
@@ -25,6 +28,25 @@ const Sidebar = styled.div`
   box-sizing: border-box;
   align-items: flex-start;
 `
+const CloseButton = styled.button`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+  &:hover {
+    color: #ffd2c2;
+  }
+`
+
 const Button = styled.button`
   width: 100%;
   background: #ffe5dc;
@@ -73,6 +95,29 @@ export default function Confirmacao() {
     }
   }, [items, delivery, payment, order, clear])
 
+  if (!payment) {
+    return (
+      <Sidebar style={{ position: 'relative' }}>
+        <CloseButton aria-label="Fechar" onClick={() => navigate(-1)}>
+          &times;
+        </CloseButton>
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: 16,
+            marginBottom: 12,
+            color: '#fff'
+          }}
+        >
+          Adicione os dados de pagamento para concluir o pedido.
+        </div>
+        <Button onClick={() => navigate('/pagamento')}>
+          Ir para pagamento
+        </Button>
+      </Sidebar>
+    )
+  }
+
   if (!order) {
     return (
       <Sidebar>
@@ -86,13 +131,26 @@ export default function Confirmacao() {
   return (
     <OverlayBg>
       <Sidebar>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>
-          Pedido realizado -{' '}
-          <span style={{ fontWeight: 700 }}>
-            {order.orderId ? `(${order.orderId})` : ''}
-          </span>
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: 17,
+            marginBottom: 18,
+            fontFamily: 'Roboto, Arial, sans-serif',
+            color: 'rgba(255,235,217,1)'
+          }}
+        >
+          Pedido realizado - {order.orderId ? `(${order.orderId})` : ''}
         </div>
-        <div style={{ fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
+        <div
+          style={{
+            fontSize: 15,
+            marginBottom: 16,
+            lineHeight: 1.7,
+            fontFamily: 'Roboto, Arial, sans-serif',
+            color: 'rgba(255,235,217,1)'
+          }}
+        >
           Estamos felizes em informar que seu pedido já está em processo de
           preparação e, em breve, será entregue no endereço fornecido.
           <br />

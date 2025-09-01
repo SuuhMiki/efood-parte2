@@ -24,8 +24,8 @@ const Socials = styled.div`
   img {
     width: 32px;
     height: 32px;
-    filter: grayscale(0) brightness(1) sepia(1) hue-rotate(-20deg) saturate(4)
-      opacity(0.7);
+    filter: grayscale(0) brightness(1) sepia(1) hue- r otate(-200deg)
+      saturate(4) opacity(0.7) 0;
     transition: opacity 0.2s;
     cursor: pointer;
   }
@@ -42,12 +42,15 @@ const Desc = styled.div`
   text-align: center;
 `
 
+import logo from '../assets/logo.png'
+import redes from '../assets/redes sociais.png'
+
 export default function Footer() {
   return (
     <Wrap>
-      <Logo src={'/src/assets/logo.png'} alt="efood logo" />
+      <Logo src={logo} alt="efood logo" />
       <img
-        src={'/src/assets/redes sociais.png'}
+        src={redes}
         alt="Redes sociais"
         style={{ marginBottom: 32, marginTop: 8, width: 88, height: 24 }}
       />

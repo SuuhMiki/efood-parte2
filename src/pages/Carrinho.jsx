@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import CartSidebar from '../components/CartSidebar'
+import { useNavigate } from 'react-router-dom'
 
 export default function Carrinho() {
-  const [open, setOpen] = useState(true)
-  if (!open) return null
-  return <CartSidebar onClose={() => setOpen(false)} />
+  const navigate = useNavigate()
+  return <CartSidebar onClose={() => navigate(-1)} />
 }

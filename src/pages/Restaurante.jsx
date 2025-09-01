@@ -1,15 +1,80 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import Header from '../components/Header'
+import logo from '../assets/logo.png'
+// Styled-components ausentes
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 40px auto 32px auto;
+  padding: 0 16px;
+  justify-items: center;
+`
+const ModalBox = styled.div`
+  background: #e66767;
+  border-radius: 0;
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  padding: 24px;
+  z-index: 1001;
+`
+
+const ModalImg = styled.img`
+  width: 320px;
+  height: 320px;
+  object-fit: cover;
+  background: #eee;
+  border-radius: 0;
+`
+
+const ModalContent = styled.div`
+  flex: 1;
+  padding: 0 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  h3 {
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 12px;
+    font-weight: 800;
+  }
+  p {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .serves {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+`
+
 import Footer from '../components/Footer'
 import Modal from '../components/Modal'
 import CartSidebar from '../components/CartSidebar'
 import { restaurantes } from '../data/mock'
 import { useCart } from '../context/CartContext'
+import OverlayBg from '../components/OverlayBg'
+import Entrega from './Entrega'
 
 const Banner = styled.div`
   width: 100%;
+  max-width: 1100px;
   height: 220px;
   position: relative;
   display: flex;
@@ -18,76 +83,28 @@ const Banner = styled.div`
   color: #fff;
   background: ${({ bg }) =>
     `linear-gradient(0deg, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.2) 100%), url('${bg}') center/cover no-repeat`};
-  padding: 0 0 32px 40px;
+  padding: 0 0 32px 24px;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
   box-sizing: border-box;
-  overflow: hidden;
-`
-
-const Grid = styled.div`
-  max-width: 1024px;
-  margin: 24px auto;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
-`
-const ModalBg = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-`
-const ModalBox = styled.div`
-  background: #e66767;
-  border-radius: 0;
-  padding: 24px 24px 24px 24px;
-  min-width: 340px;
-  max-width: 900px;
-  width: 90vw;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 32px;
-  color: #fff;
-  position: relative;
-`
-const ModalImg = styled.img`
-  width: 260px;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 0;
-  background: #fff;
-`
-const ModalContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 12px;
-  h3 {
-    font-size: 26px;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    color: #fff;
+  margin: 0 auto 0 auto;
+  .banner-type {
+    font-size: 22px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-bottom: 8px;
+    text-align: left;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
   }
-  p {
-    color: #fff;
-    font-size: 16px;
-    margin: 0 0 8px 0;
-    line-height: 1.5;
-  }
-  .serves {
-    color: #ffe5dc;
-    font-size: 15px;
-    margin-bottom: 12px;
+  .banner-name {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: left;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
   }
 `
 const ModalButton = styled.button`
-  background: #ffe5dc;
+  background: #ffe5d9;
   color: #e66767;
   font-weight: 700;
   border: none;
@@ -97,6 +114,8 @@ const ModalButton = styled.button`
   margin-top: 8px;
   cursor: pointer;
   transition: background 0.2s;
+  box-shadow: none;
+  outline: none;
   &:hover {
     background: #ffd2c2;
   }
@@ -120,10 +139,12 @@ const ModalClose = styled.button`
 
 export default function Restaurante() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [restaurante, setRestaurante] = useState(null)
   const [produto, setProduto] = useState(null)
-  const [cartOpen, setCartOpen] = useState(false)
-  const { addItem } = useCart()
+  // Controle único para barra lateral
+  const [sidebar, setSidebar] = useState(null) // 'cart', 'entrega', 'pagamento', 'checkout'
+  const { addItem, items } = useCart()
 
   useEffect(() => {
     fetch(`https://ebac-fake-api.vercel.app/api/efood/restaurantes/${id}`)
@@ -138,111 +159,308 @@ export default function Restaurante() {
       price: prato.preco,
       image: prato.foto
     })
-    setCartOpen(true)
+    navigate(`/restaurante/${id}/carrinho`)
   }
 
   if (!restaurante) return <p>Carregando...</p>
 
   return (
     <>
-      <Header />
-      <Banner bg={restaurante.capa}>
-        <div
-          style={{
-            fontSize: 22,
-            fontWeight: 400,
-            opacity: 0.9,
-            marginBottom: 8
-          }}
-        >
-          {restaurante.tipo}
-        </div>
-        <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.1 }}>
-          {restaurante.nome}
-        </div>
-      </Banner>
-      <Grid>
-        {restaurante.cardapio.map((prato) => (
+      {/* OverlayBg removido daqui, pois é responsabilidade do OverlayRoutes nas rotas de overlay */}
+      {!sidebar && (
+        <>
           <div
-            key={prato.id}
             style={{
-              background: 'var(--card)',
-              border: '1px solid #f0d3cb',
-              padding: 12,
-              borderRadius: 10
+              width: '100%',
+              maxWidth: '1100px',
+              left: 0,
+              top: 0,
+              zIndex: 200,
+              background: '#ffecdf',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto'
             }}
           >
-            <img
-              src={prato.foto}
-              alt={prato.nome}
+            <div
               style={{
                 width: '100%',
-                height: 160,
-                objectFit: 'cover',
-                borderRadius: 8
+                maxWidth: '1100px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                margin: '0 auto',
+                height: '100%',
+                position: 'relative'
               }}
-            />
-            <div style={{ display: 'grid', gap: 6, marginTop: 10 }}>
-              <strong>{prato.nome}</strong>
-              <small style={{ opacity: 0.8 }}>{prato.descricao}</small>
-              <button
-                type="button"
+            >
+              <span
                 style={{
-                  justifySelf: 'start',
-                  background: 'var(--primary)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 12px',
-                  borderRadius: 8,
+                  color: '#e66767',
+                  fontWeight: 700,
+                  fontSize: 20,
+                  marginLeft: 40,
+                  fontFamily: 'inherit',
                   cursor: 'pointer'
                 }}
-                onClick={() => setProduto(prato)}
+                onClick={() => navigate('/')}
+                role="button"
+                tabIndex={0}
               >
-                Comprar produto
-              </button>
-            </div>
-          </div>
-        ))}
-      </Grid>
-      <Footer />
-
-      {produto && (
-        <ModalBg onClick={() => setProduto(null)}>
-          <ModalBox onClick={(e) => e.stopPropagation()}>
-            <ModalClose onClick={() => setProduto(null)} aria-label="Fechar">
-              ×
-            </ModalClose>
-            <ModalImg
-              src={
-                produto.foto && produto.foto !== ''
-                  ? produto.foto
-                  : '/src/assets/pizza.jpg'
-              }
-              alt={produto.nome}
-              onError={(e) => {
-                e.target.onerror = null
-                e.target.src = '/src/assets/pizza.jpg'
-              }}
-            />
-            <ModalContent>
-              <h3>{produto.nome}</h3>
-              <p>{produto.descricao}</p>
-              <div className="serves">Serve: de 2 a 3 pessoas</div>
-              <ModalButton
-                onClick={() => {
-                  addToCart(produto)
-                  setProduto(null)
+                Restaurantes
+              </span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 80,
+                  background: 'transparent',
+                  margin: '0 auto'
                 }}
               >
-                Adicionar ao carrinho - R${' '}
-                {Number(produto.preco).toFixed(2).replace('.', ',')}
-              </ModalButton>
-            </ModalContent>
-          </ModalBox>
-        </ModalBg>
+                <img src={logo} alt="efood logo" style={{ height: 48 }} />
+              </div>
+              <span
+                style={{
+                  color: '#e66767',
+                  fontWeight: 700,
+                  fontSize: 20,
+                  marginRight: 40,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer'
+                }}
+                onClick={() => navigate(`/restaurante/${id}/carrinho`)}
+                role="button"
+                tabIndex={0}
+              >
+                {items.length} produto(s) no carrinho
+              </span>
+            </div>
+          </div>
+          <Banner bg={restaurante.capa}>
+            <div
+              className="banner-type"
+              style={{
+                color: 'rgba(255,255,255,0.8)',
+                fontWeight: 400,
+                fontSize: 22,
+                marginBottom: 8,
+                marginTop: 0,
+                textShadow: '0 1px 2px rgba(0,0,0,0.12)'
+              }}
+            >
+              {restaurante.tipo}
+            </div>
+            <div
+              className="banner-name"
+              style={{
+                color: 'rgba(255,255,255,1)',
+                fontWeight: 800,
+                fontSize: 32,
+                lineHeight: 1.1,
+                textShadow: '0 1px 2px rgba(0,0,0,0.18)'
+              }}
+            >
+              {restaurante.titulo || restaurante.nome}
+            </div>
+          </Banner>
+          <Grid>
+            {Array.isArray(restaurante.cardapio) &&
+            restaurante.cardapio.length > 0 ? (
+              restaurante.cardapio.map((prato) => (
+                <div
+                  key={prato.id}
+                  style={{
+                    background: 'rgba(230, 103, 103, 1)',
+                    border: '2px solid #e66767',
+                    padding: 18,
+                    borderRadius: 0,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 220,
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    width: '100%',
+                    maxWidth: 420
+                  }}
+                >
+                  <img
+                    src={prato.foto}
+                    alt={prato.nome}
+                    style={{
+                      width: '100%',
+                      height: 180,
+                      objectFit: 'cover',
+                      borderRadius: 0,
+                      marginBottom: 0
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 6,
+                      marginTop: 10
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: 2
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: 'rgba(255, 235, 217, 1)',
+                          fontSize: 18,
+                          fontWeight: 700
+                        }}
+                      >
+                        {prato.nome}
+                      </span>
+                      <span
+                        style={{
+                          color: '#e66767',
+                          fontSize: 16,
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2
+                        }}
+                      >
+                        {Number(prato.avaliacao || prato.nota).toFixed(1)}{' '}
+                        <span
+                          style={{
+                            color: '#ffb800',
+                            fontSize: 18,
+                            marginLeft: 2
+                          }}
+                        >
+                          ★
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(230, 103, 103, 1)',
+                        color: '#fff',
+                        fontSize: 15,
+                        margin: 0,
+                        lineHeight: 1.4,
+                        marginBottom: 8,
+                        borderRadius: 4,
+                        padding: '8px 10px'
+                      }}
+                    >
+                      {prato.descricao}
+                    </div>
+                    <button
+                      type="button"
+                      style={{
+                        background: 'rgba(255, 235, 217, 1)',
+                        color: '#e66767',
+                        fontWeight: 700,
+                        border: 'none',
+                        borderRadius: 4,
+                        padding: '7px 18px',
+                        fontSize: 15,
+                        marginTop: 4,
+                        alignSelf: 'flex-start',
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        transition: 'background .2s'
+                      }}
+                      onClick={() => setProduto(prato)}
+                    >
+                      Saiba mais
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div
+                style={{
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  gridColumn: '1/-1',
+                  textAlign: 'center',
+                  padding: 40
+                }}
+              >
+                Nenhum prato encontrado para este restaurante.
+              </div>
+            )}
+          </Grid>
+          <Footer />
+          {/* Modal de produto só aparece se não estiver em modo overlay (sidebar) */}
+          {!sidebar && produto && (
+            <OverlayBg onClick={() => setProduto(null)}>
+              <ModalBox onClick={(e) => e.stopPropagation()}>
+                <ModalClose
+                  onClick={() => setProduto(null)}
+                  aria-label="Fechar"
+                >
+                  ×
+                </ModalClose>
+                <ModalImg
+                  src={
+                    produto.foto && produto.foto !== ''
+                      ? produto.foto
+                      : '/src/assets/pizza.jpg'
+                  }
+                  alt={produto.nome}
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = '/src/assets/pizza.jpg'
+                  }}
+                />
+                <ModalContent>
+                  <h3>{produto.nome}</h3>
+                  <p>{produto.descricao}</p>
+                  <div className="serves">Serve: de 2 a 3 pessoas</div>
+                  <ModalButton
+                    onClick={() => {
+                      addToCart(produto)
+                      setProduto(null)
+                    }}
+                  >
+                    Adicionar ao carrinho - R${' '}
+                    {Number(produto.preco).toFixed(2).replace('.', ',')}
+                  </ModalButton>
+                </ModalContent>
+              </ModalBox>
+            </OverlayBg>
+          )}
+        </>
       )}
 
-      {cartOpen && <CartSidebar onClose={() => setCartOpen(false)} />}
+      {sidebar === 'cart' && (
+        <CartSidebar
+          onClose={() => setSidebar(null)}
+          onNext={() => setSidebar('entrega')}
+        />
+      )}
+      {sidebar === 'entrega' && (
+        <Entrega
+          onClose={() => navigate(`/restaurante/${id}`)}
+          onNext={() => setSidebar('pagamento')}
+        />
+      )}
+      {sidebar === 'pagamento' && (
+        <Pagamento
+          onClose={() => setSidebar(null)}
+          onNext={() => setSidebar('checkout')}
+        />
+      )}
+      {sidebar === 'checkout' && (
+        <Confirmacao onClose={() => setSidebar(null)} />
+      )}
     </>
   )
 }

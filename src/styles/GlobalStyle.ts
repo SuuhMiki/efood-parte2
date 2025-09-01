@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
   :root{
@@ -8,25 +8,25 @@ const GlobalStyle = createGlobalStyle`
     --text:#221F1F;
   }
 
-  *{ 
-    box-sizing: border-box; 
-    margin:0; 
-    padding:0; 
+  *{
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
   }
 
   body{
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
     background: var(--bg);
     color: var(--text);
   }
 
-  a{ 
-    color: inherit; 
-    text-decoration: none; 
+  a{
+    color: inherit;
+    text-decoration: none;
   }
 
-  button{ 
-    cursor:pointer; 
+  button{
+    cursor:pointer;
   }
 
   /* Form helpers */
@@ -39,31 +39,31 @@ const GlobalStyle = createGlobalStyle`
     font-size: 14px;
   }
 
-  input:focus{ 
-    border-color: var(--primary); 
-    box-shadow: 0 0 0 3px rgba(230,103,103,.15); 
+  input:focus{
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(230,103,103,.15);
   }
 
-  input.error{ 
-    border-color: #d32f2f; 
-    box-shadow: 0 0 0 3px rgba(211,47,47,.15); 
+  input.error{
+    border-color: #d32f2f;
+    box-shadow: 0 0 0 3px rgba(211,47,47,.15);
   }
 
-  small.error{ 
-    color:#d32f2f; 
-    margin-top:4px; 
+  small.error{
+    color:#d32f2f;
+    margin-top:4px;
     font-size: 12px;
   }
 
-  label{ 
-    font-weight: 600; 
-    font-size: 14px; 
+  label{
+    font-weight: 600;
+    font-size: 14px;
   }
 
-  .field{ 
-    display:grid; 
-    gap:6px; 
+  .field{
+    display:grid;
+    gap:6px;
   }
-`;
+`
 
-export default GlobalStyle;
+export default GlobalStyle

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Card from '../components/Card'
 
@@ -16,13 +15,13 @@ const Hero = styled.section`
   border: none;
   text-align: center;
   .logo {
-    background: #fff;
-    border: 4px solid #e66767;
-    border-radius: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 32px;
+    padding: 0;
     height: 72px;
     margin-bottom: 64px;
     box-sizing: border-box;
@@ -70,7 +69,6 @@ export default function Home() {
 
   return (
     <>
-      <Header />
       <Hero>
         <div className="logo">
           <img
@@ -86,18 +84,33 @@ export default function Home() {
         </h1>
       </Hero>
       <Grid>
-        {restaurantes.map((r, idx) => (
-          <Card
-            key={r.id || idx}
-            id={r.id}
-            capa={r.capa}
-            titulo={r.titulo || r.nome}
-            tipo={r.tipo}
-            destaque={r.destaque}
-            nota={r.avaliacao || r.nota}
-            descricao={r.descricao}
-          />
-        ))}
+        {restaurantes.length === 0 ? (
+          <div
+            style={{
+              gridColumn: '1/-1',
+              textAlign: 'center',
+              color: '#e66767',
+              fontWeight: 700,
+              fontSize: 20,
+              padding: 40
+            }}
+          >
+            Nenhum restaurante encontrado.
+          </div>
+        ) : (
+          restaurantes.map((r, idx) => (
+            <Card
+              key={r.id || idx}
+              id={r.id}
+              capa={r.capa}
+              nome={r.nome || r.titulo || 'Restaurante'}
+              tipo={r.tipo}
+              destaque={r.destacado}
+              nota={r.avaliacao || r.nota}
+              descricao={r.descricao}
+            />
+          ))
+        )}
       </Grid>
       <Footer />
     </>

@@ -20,7 +20,7 @@ const QtyButton = styled.button`
 `
 
 const CloseBtn = styled.button`
-  position: absolute;
+  /* position: absolute; */
   top: 2px;
   right: 8px;
   background: none;
@@ -48,9 +48,12 @@ const Wrap = styled.aside`
   padding: 8px 8px 0 8px;
   display: flex;
   flex-direction: column;
-  z-index: 30;
+  z-index: 130;
   box-sizing: border-box;
   overflow-x: hidden;
+  box-shadow:
+    -4px 0 32px 8px rgba(0, 0, 0, 0.25),
+    -1px 0 0 0 #fff8f1;
 `
 
 const Item = styled.div`
@@ -129,9 +132,15 @@ const Button = styled.button`
   }
 `
 
-export default function CartSidebar({ onClose }) {
+export default function CartSidebar({ onClose, onNext }) {
   const { items, removeItem, total, inc, dec } = useCart()
   const navigate = useNavigate()
+
+  const handleNext = () => {
+    if (items.length) {
+      navigate('/entrega')
+    }
+  }
 
   return (
     <Wrap>
@@ -191,7 +200,7 @@ export default function CartSidebar({ onClose }) {
         <span>Valor total</span>
         <span>R$ {total.toFixed(2).replace('.', ',')}</span>
       </TotalBar>
-      <Button disabled={!items.length} onClick={() => navigate('/entrega')}>
+      <Button disabled={!items.length} onClick={handleNext}>
         Continuar com a entrega
       </Button>
     </Wrap>
