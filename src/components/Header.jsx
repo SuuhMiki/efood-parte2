@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { Link, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import logo from '../assets/logo.png'
 
 const Bar = styled.header`
   background: #ffe5dc;
@@ -55,8 +56,7 @@ export default function Header() {
   return (
     <Bar>
       <Brand to="/">
-        <img src="/src/assets/logo.png" alt="eFood" width="28" height="28" />{' '}
-        eFood
+        <img src={logo} alt="eFood" width="28" height="28" /> eFood
       </Brand>
       <Nav>
         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>

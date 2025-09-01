@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import logo from '../assets/logo.png'
+const Logo = styled.img`
+  height: 72px;
+  margin-bottom: 24px;
+`
 import styled from 'styled-components'
 import Footer from '../components/Footer'
 import Card from '../components/Card'
@@ -71,11 +76,7 @@ export default function Home() {
     <>
       <Hero>
         <div className="logo">
-          <img
-            src="/src/assets/logo.png"
-            alt="efood logo"
-            style={{ height: 48 }}
-          />
+          <Logo src={logo} alt="efood logo" />
         </div>
         <h1 className="hero-title">
           Viva experiências gastronômicas
