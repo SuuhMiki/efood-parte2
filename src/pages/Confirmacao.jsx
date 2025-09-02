@@ -70,22 +70,39 @@ export default function Confirmacao() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Monta o payload para a API
     if (!order && items && delivery && payment) {
+      // Monta o payload conforme o backend espera
+      const payload = {
+        products: items.map((i) => ({
+          id: i.id,
+          price: i.price
+        })),
+        delivery: {
+          receiver: delivery.nome,
+          address: {
+            description: delivery.endereco,
+            city: delivery.cidade,
+            zipCode: delivery.cep,
+            number: Number(delivery.numero),
+            complement: delivery.complemento || ''
+          }
+        },
+        payment: {
+          card: {
+            name: payment.nome,
+            number: payment.numero.replace(/\s/g, ''),
+            code: Number(payment.cvv),
+            expires: {
+              month: Number(payment.mes),
+              year: Number(payment.ano)
+            }
+          }
+        }
+      }
       fetch('https://ebac-fake-api.vercel.app/api/efood/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          products: items.map((i) => ({
-            id: i.id,
-            price: i.price,
-            name: i.name,
-            image: i.image,
-            quantity: i.qty
-          })),
-          delivery,
-          payment
-        })
+        body: JSON.stringify(payload)
       })
         .then((res) => res.json())
         .then((data) => {
