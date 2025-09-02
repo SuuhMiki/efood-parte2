@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Wrap = styled.footer`
   width: 100%;
   background: #ffecdf;
-  padding: 48px 0 24px 0;
+  padding: 24px 0 12px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,14 +13,14 @@ const Wrap = styled.footer`
 `
 
 const Logo = styled.img`
-  height: 72px;
-  margin-bottom: 24px;
+  height: 48px;
+  margin-bottom: 16px;
 `
 
 const Socials = styled.div`
   display: flex;
-  gap: 32px;
-  margin-bottom: 32px;
+  gap: 20px;
+  margin-bottom: 20px;
   img {
     width: 32px;
     height: 32px;
@@ -37,7 +37,7 @@ const Socials = styled.div`
 const Desc = styled.div`
   font-size: 13px;
   color: #e66767;
-  margin-top: 16px;
+  margin-top: 8px;
   max-width: 600px;
   text-align: center;
 `

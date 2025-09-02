@@ -2,16 +2,31 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import logo from '../assets/logo.png'
+const PratoCard = styled.div`
+  background: rgba(230, 103, 103, 1);
+  border: 2px solid #e66767;
+  padding: 18px;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  align-items: center;
+  width: 320px;
+  justify-content: flex-start;
+  box-sizing: border-box;
+`
 // Styled-components ausentes
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 32px;
   max-width: 1100px;
   width: 100%;
   margin: 40px auto 32px auto;
   padding: 0 16px;
   justify-items: center;
+  align-items: stretch;
 `
 const ModalBox = styled.div`
   background: #e66767;
@@ -267,23 +282,7 @@ export default function Restaurante() {
             {Array.isArray(restaurante.cardapio) &&
             restaurante.cardapio.length > 0 ? (
               restaurante.cardapio.map((prato) => (
-                <div
-                  key={prato.id}
-                  style={{
-                    background: 'rgba(230, 103, 103, 1)',
-                    border: '2px solid #e66767',
-                    padding: 18,
-                    borderRadius: 0,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: 220,
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    width: '100%',
-                    maxWidth: 420
-                  }}
-                >
+                <PratoCard key={prato.id}>
                   <img
                     src={prato.foto}
                     alt={prato.nome}
@@ -300,7 +299,10 @@ export default function Restaurante() {
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 6,
-                      marginTop: 10
+                      marginTop: 10,
+                      flex: 1,
+                      width: '100%',
+                      justifyContent: 'flex-start'
                     }}
                   >
                     <div
@@ -356,36 +358,33 @@ export default function Restaurante() {
                     >
                       {prato.descricao}
                     </div>
-                    <button
-                      type="button"
-                      style={{
-                        background: 'rgba(255, 235, 217, 1)',
-                        color: '#e66767',
-                        fontWeight: 700,
-                        border: 'none',
-                        borderRadius: 4,
-                        padding: '7px 18px',
-                        fontSize: 15,
-                        marginTop: 4,
-                        alignSelf: 'flex-start',
-                        cursor: 'pointer',
-                        textDecoration: 'none',
-                        transition: 'background .2s'
-                      }}
-                      onClick={() => setProduto(prato)}
-                    >
-                      Adicionar ao carrinho
-                    </button>
                   </div>
-                </div>
+                  <button
+                    type="button"
+                    style={{
+                      background: '#ffe5d9',
+                      color: '#e66767',
+                      fontWeight: 700,
+                      border: 'none',
+                      borderRadius: 0,
+                      padding: '8px 14px',
+                      fontSize: 16,
+                      marginTop: 'auto',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s',
+                      boxShadow: 'none',
+                      outline: 'none',
+                      width: '100%'
+                    }}
+                    onClick={() => addToCart(prato)}
+                  >
+                    Adicionar ao carrinho
+                  </button>
+                </PratoCard>
               ))
             ) : (
               <div
                 style={{
-                  color: '#fff',
-                  fontWeight: 700,
-                  fontSize: 18,
-                  gridColumn: '1/-1',
                   textAlign: 'center',
                   padding: 40
                 }}
