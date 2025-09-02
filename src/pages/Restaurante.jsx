@@ -376,7 +376,7 @@ export default function Restaurante() {
                       outline: 'none',
                       width: '100%'
                     }}
-                    onClick={() => addToCart(prato)}
+                    onClick={() => setProduto(prato)}
                   >
                     Adicionar ao carrinho
                   </button>
