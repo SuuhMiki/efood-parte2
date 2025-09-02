@@ -74,7 +74,6 @@ import Entrega from './Entrega'
 
 const Banner = styled.div`
   width: 100%;
-  max-width: 1100px;
   height: 220px;
   position: relative;
   display: flex;
@@ -172,7 +171,6 @@ export default function Restaurante() {
           <div
             style={{
               width: '100%',
-              maxWidth: '1100px',
               left: 0,
               top: 0,
               zIndex: 200,
@@ -186,7 +184,6 @@ export default function Restaurante() {
             <div
               style={{
                 width: '100%',
-                maxWidth: '1100px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -377,7 +374,7 @@ export default function Restaurante() {
                       }}
                       onClick={() => setProduto(prato)}
                     >
-                      Saiba mais
+                      Adicionar ao carrinho
                     </button>
                   </div>
                 </div>
