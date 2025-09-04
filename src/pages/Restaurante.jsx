@@ -317,7 +317,8 @@ export default function Restaurante() {
                         style={{
                           color: 'rgba(255, 235, 217, 1)',
                           fontSize: 18,
-                          fontWeight: 700
+                          fontWeight: 700,
+                          paddingLeft: 10
                         }}
                       >
                         {prato.nome}
