@@ -322,27 +322,6 @@ export default function Restaurante() {
                       >
                         {prato.nome}
                       </span>
-                      <span
-                        style={{
-                          color: '#e66767',
-                          fontSize: 16,
-                          fontWeight: 700,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 2
-                        }}
-                      >
-                        {Number(prato.avaliacao || prato.nota).toFixed(1)}{' '}
-                        <span
-                          style={{
-                            color: '#ffb800',
-                            fontSize: 18,
-                            marginLeft: 2
-                          }}
-                        >
-                          ★
-                        </span>
-                      </span>
                     </div>
                     <div
                       style={{
